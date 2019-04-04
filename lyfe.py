@@ -2,16 +2,24 @@
 # Lyric Fetcher - LyFe
 
 """
+
 Fetches lyrics from azlyrics.com
 
 """
 from bs4 import BeautifulSoup
 from urllib import request
+import crayons as cra
+import os
 import sys
 
 def quit(s):
     print(s)
     sys.exit()
+    
+# HTML ugly stuff
+def beautify(ugly):
+    pass
+
     
 
 def fetch():
@@ -24,6 +32,8 @@ def fetch():
 
     if len(sys.argv) > 2:
         quit('Too many arguments')
+    elif sys.argv[1] is (int or float):
+        quit('Numbers are forbidden')
     
     soup = BeautifulSoup(req.read(), 'html5lib')
 
@@ -68,6 +78,10 @@ def fetch():
     soup = BeautifulSoup(req.read(), 'html5lib')
     title = soup.find("div", class_='ringtone').find_next("div")
     lyr = title.get_text()
-    print(lyr)
+    beautify(lyr)
+    f = open('test.html', 'w')
+    f.write(lyr)
+    f.close()
+#    print(lyr)
     
 fetch()
