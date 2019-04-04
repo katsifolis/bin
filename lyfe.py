@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Abstract
 # Lyric Fetcher - LyFe
 
@@ -9,24 +10,25 @@ Fetches lyrics from azlyrics.com
 from bs4 import BeautifulSoup
 from urllib import request
 import crayons as cra
-import os
-import sys
+import os, sys
+
+# Globals
+flag = True
+page = 0
 
 def quit(s):
     print(s)
+    flag = False
     sys.exit()
-    
+
 # HTML ugly stuff
 def beautify(ugly):
-    pass
+    print(ugly)
 
-    
-
-def fetch():
-
+def fetch(page):
     #Assertions
     try: 
-        req = request.urlopen('https://search.azlyrics.com/search.php?q=%s&w=songs&p=1' % sys.argv[1])
+        req = request.urlopen('https://search.azlyrics.com/search.php?q={}&w=songs&p={}'.format(sys.argv[1], page))
     except:
         quit("Didn't provide any song name")
 
@@ -66,8 +68,10 @@ def fetch():
         counter = counter + 1
 
     try:
-        slctn = int(input('Make your selection: '))
-        while slctn > 20 or slctn < 0: 
+        slctn = int(input('Make your selection, or see more results (0): '))
+        if slctn == 0:
+            return True
+        while slctn > 20 or slctn < 1: 
             slctn = int(input('Invalid,\nMake your selection: '))
 
     except:
@@ -79,9 +83,8 @@ def fetch():
     title = soup.find("div", class_='ringtone').find_next("div")
     lyr = title.get_text()
     beautify(lyr)
-    f = open('test.html', 'w')
-    f.write(lyr)
-    f.close()
-#    print(lyr)
+    return False
     
-fetch()
+while flag:
+    page = page + 1
+    flag = fetch(page)
