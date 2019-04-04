@@ -9,20 +9,6 @@ from bs4 import BeautifulSoup
 from urllib import request
 import sys
 
-
-class lyrics:
-    song_name = ''
-    band = ''
-    
-    def __init__(self, one, two, three):
-        self.one = one
-        self.two = two
-        self.three = []
-
-    def get(self, he):
-        self.three.append(he)
-    
-
 def quit(s):
     print(s)
     sys.exit()
