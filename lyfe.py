@@ -1,18 +1,25 @@
-#!/usr/bin/python3
-# Abstract
-# Lyric Fetcher - LyFe
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 """
-
 Fetches lyrics from azlyrics.com
 
 """
+
 from bs4 import BeautifulSoup
 from urllib import request
+from re import sub
 import crayons as cra
 import os, sys
 
 # Globals
+
+"""
+- 0 for beginning
+- 1 for continuing
+- 2 for error typing
+"""
+
 flag = True
 page = 0
 
@@ -20,6 +27,13 @@ def quit(s):
     print(s)
     flag = False
     sys.exit()
+
+def replace_(s, c):
+    s = s.lower()
+    for i in c:
+        s = s.replace(i, '')
+
+    return s
 
 # HTML ugly stuff
 def beautify(ugly):
@@ -55,15 +69,20 @@ def fetch(page):
         
         band = i.b.get_text()
         song_name = i.b.next_element.next_element.next_element.get_text()
-        if band == '' or song_name == '':
+
+        # Some songs happen to be unfilled with their respective artist
+        if song_name == '' and band == '':
             quit('No results, try again :)')
+        
+        if band == '':
+            band = 'NO_CLUE'
 
-        #Ignores unicode characters + special chars because the url completely ignores them and 
-        band = band.encode('ascii', 'ignore').decode('utf-8').replace('(', '').replace(')', '')
-        song_name = song_name.encode('ascii', 'ignore').decode('utf-8').replace('(', '').replace(')', '')
 
+        # Ignores unicode characters + special chars because the url completely ignores them and 
         print(str(counter) + '. ' + song_name + ' - ' + band)
-        songs.append(band.lower().replace(' ', '') + ' ' +  song_name.lower().replace(' ', ''))
+        band = replace_(band, '() \'')
+        song_name = replace_(song_name, '() \'')
+        songs.append(band + ' ' +  song_name)
 
         counter = counter + 1
 
@@ -71,11 +90,12 @@ def fetch(page):
         slctn = int(input('Make your selection, or see more results (0): '))
         if slctn == 0:
             return True
-        while slctn > 20 or slctn < 1: 
+        if slctn > 20 or slctn < 1:
             slctn = int(input('Invalid,\nMake your selection: '))
 
-    except:
-        sys.exit()
+    except ValueError:
+        quit('Bad luck: str given')
+        
 
     req = request.urlopen('https://www.azlyrics.com/lyrics/{}/{}.html'.format(songs[slctn - 1].split(' ')[1], songs[slctn - 1].split(' ')[0]))
 
