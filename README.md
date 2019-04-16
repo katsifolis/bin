@@ -3,4 +3,8 @@ LyFe - Lyric Fetcher
 
 Fetches Lyrics from azlyrics.com
 
- Just scraping
+Just scraping
+
+# Treepy
+
+Trees out the contets of the directory given
