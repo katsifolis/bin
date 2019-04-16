@@ -52,8 +52,8 @@ Z[4][4] =
 
 int
 S[4][4] = {
-	{1, 1, 0, 0},
 	{0, 1, 1, 0},
+	{1, 1, 0, 0},
 	{0, 0, 0, 0},
 	{0, 0, 0, 0},
 };
@@ -62,27 +62,27 @@ S[4][4] = {
 int
 L[4][4] = 
 {
-	{0, 0, 0, 0},
 	{0, 1, 0, 0},
 	{0, 1, 0, 0},
 	{0, 1, 1, 0},
+	{0, 0, 0, 0},
 };
 
 int
 T[4][4] = 
 {
-	{0, 0, 0, 0},
 	{1, 1, 1, 0},
 	{0, 1, 0, 0},
 	{0, 1, 0, 0},
+	{0, 0, 0, 0},
 };
 
 int
 J[4][4] = {
+	{0, 1, 0, 0},
+	{0, 1, 0, 0},
+	{1, 1, 0, 0},
 	{0, 0, 0, 0},
-	{1, 1, 1, 0},
-	{0, 1, 0, 0},
-	{0, 1, 0, 0},
 };
 
 
@@ -103,6 +103,16 @@ int init();
 void draw(piece, int[]);
 void new_piece(piece*);
 
+// Color the Blocks according to their shape
+
+void
+colorize()
+{
+
+	return;
+
+}
+
 void
 new_piece(piece* p)
 {
@@ -114,8 +124,6 @@ new_piece(piece* p)
 		}
 		puts("");
 	}
-
-
 }
 
 void
@@ -128,7 +136,6 @@ draw_map(int map[ROWS*COLS])
 		}
 		puts("");
 	}
-
 
 }
 
@@ -143,22 +150,29 @@ draw(piece p, int map[ROWS*COLS])
 	/* Pieces */
 	SDL_Rect r = {p.x, p.y, BLOCK_SIZE, BLOCK_SIZE};
 	SDL_SetRenderDrawColor(renderer, 0xff, 0x00, 0x00, 0x00);
-	
-	int counter = (p.x + p.y) / BLOCK_SIZE;
+
+
+	int counter = ((p.x / BLOCK_SIZE) * COLS) + (p.y / BLOCK_SIZE);
+
 	for (int i = 0; i < 4; i++) {
 		for (int j=0; j < 4; j++) {
-			if (p.shape[i][j] == 1 && map[counter] == 0) {
+			if (map[counter] == 1 && p.shape[i][j] == 1) {return;}
+
+			if (p.shape[i][j] == 1) {
 				/* Inverted */
-				r.x = (j * 32);
-				r.y = (i * 32);
+				r.x = p.x + (j * 32);
+				r.y = p.y + (i * 32);
 				map[counter] = 1;
+				colorize(p.id);
 				SDL_RenderDrawRect(renderer,&r);
 			}
+
 			counter++;
 		}
-		counter = counter + COLS - 4;
+		counter = counter + COLS - 4; /* 4 the row and col size of the tetrominoes' map */
 	}
 	SDL_RenderPresent(renderer);
+	
 }
 
 int 
@@ -186,7 +200,8 @@ main()
 
 
 	int map[ROWS*COLS] = {0};
-	piece p = {0, 0, 0, 0};
+//	piece p = {0, 0, 0, 0};
+	piece p = {128, 128, 0, 0};
 	new_piece(&p);
 	
 	int gravity = 1;
@@ -203,22 +218,27 @@ main()
 		/* Input Handling */
 		if (event.type == SDL_KEYDOWN) {
 			switch (event.key.keysym.sym) {
-			case SDLK_a:
-				SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0xff, 0xee);
-				SDL_RenderClear(renderer);
-				SDL_RenderPresent(renderer);
+			case SDLK_LEFT:
+
+			case SDLK_RIGHT:
+
+			case SDLK_DOWN:
+
+			case SDLK_SPACE:
+
+			default:
+				break;
 			}
 		}
 		/* Frames */
-		if (curr_time > last_time + 100) {
+		if (curr_time > last_time + 200) {
 			draw(p, map);
+			p.y = p.y + 32;
+		//	draw_map(map);
 			last_time = curr_time;
-			break;
 		}
     }
 
-	draw_map(map);	
-	SDL_Delay(1000);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 
