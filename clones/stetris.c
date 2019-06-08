@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <time.h>
+#include <math.h>
 
 #define WINW 320
 #define WINH 640
@@ -23,13 +24,15 @@ typedef struct {
 
 /* Tetrominoes */
 
+int mapius[200] = {0};
+
 int
 I[4][4] = 
 {
-	{0, 1, 0, 0},
-	{0, 1, 0, 0},
-	{0, 1, 0, 0},
-	{0, 1, 0, 0},
+	{0, 0, 0, 0},
+	{0, 0, 0, 0},
+	{1, 1, 1, 1},
+	{0, 0, 0, 0},
 };
 
 int
@@ -44,17 +47,17 @@ O[4][4] =
 int
 Z[4][4] = 
 {
+	{0, 0, 0, 0},
 	{1, 1, 0, 0},
 	{0, 1, 1, 0},
-	{0, 0, 0, 0},
 	{0, 0, 0, 0},
 };
 
 int
 S[4][4] = {
+	{0, 0, 0, 0},
 	{0, 1, 1, 0},
 	{1, 1, 0, 0},
-	{0, 0, 0, 0},
 	{0, 0, 0, 0},
 };
 
@@ -100,16 +103,28 @@ int (*shapes[7])[4][4] = {
 /* Declarations */
 void input();
 int init();
-void draw(piece, int[]);
 void new_piece(piece*);
+void draw(piece*, int*);
 
 // Color the Blocks according to their shape
 
-void
-colorize()
+
+void 
+save_map(piece* p, int* map)
 {
 
-	return;
+	
+	for (int i = 0; i < 4; i++) {
+		for (int j=0; j < 4; j++) {
+			if (map[(p->x / 32) + (p->y / 32)] == 1) {
+				 continue; 
+			}
+			
+			
+				
+		}
+	}
+
 
 }
 
@@ -117,6 +132,8 @@ void
 new_piece(piece* p)
 {
 	p->id = rand() % 7;
+	p->x = 64;
+	p->y = -128;
 	memcpy(p->shape, shapes[p->id], sizeof(p->shape));
 	for (int i = 0; i < 4; i++) {
 		for (int j=0; j < 4; j++) {
@@ -127,43 +144,54 @@ new_piece(piece* p)
 }
 
 void
-draw_map(int map[ROWS*COLS])
+draw_map(int* map)
 {
 	int counter = 0;
 	for (int i = 0; i < ROWS; i++) {
 		for (int j=0; j < COLS; j++) {
-			printf("%d", map[counter++]);
+			printf("%d",  map[counter++]);
 		}
 		puts("");
 	}
+	puts("");
 
 }
 
 void
-draw(piece p, int map[ROWS*COLS])
+draw(piece* p, int* map)
 {
-
 	/* Screen */
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
 	SDL_RenderClear(renderer);
+
+
+	/* MAP */
+	
+	SDL_Rect rr = { 0, 0, BLOCK_SIZE, BLOCK_SIZE };
+	for (int i = 0; i < ROWS; i++) {
+		for (int j=0; j < COLS; j++) {
+			if (map[i * COLS + j] == 1) {
+				/* Inverted */
+				rr.y = i * 32;
+				rr.x = j * 32;
+				SDL_RenderDrawRect(renderer,&rr);
+			}
+		}
+	}
 	
 	/* Pieces */
-	SDL_Rect r = {p.x, p.y, BLOCK_SIZE, BLOCK_SIZE};
+	SDL_Rect r = {p->x, p->y, BLOCK_SIZE, BLOCK_SIZE};
 	SDL_SetRenderDrawColor(renderer, 0xff, 0x00, 0x00, 0x00);
 
-
-	int counter = ((p.x / BLOCK_SIZE) * COLS) + (p.y / BLOCK_SIZE);
+	int counter = ((fabs(p->x) / BLOCK_SIZE) * COLS) + (p->y / BLOCK_SIZE);
 
 	for (int i = 0; i < 4; i++) {
 		for (int j=0; j < 4; j++) {
-			if (map[counter] == 1 && p.shape[i][j] == 1) {return;}
-
-			if (p.shape[i][j] == 1) {
+			if (p->shape[i][j] == 1) {
 				/* Inverted */
-				r.x = p.x + (j * 32);
-				r.y = p.y + (i * 32);
-				map[counter] = 1;
-				colorize(p.id);
+				r.x = p->x * j;
+				r.y = p->y  * i;
+				if (p->x >= 0) map[counter] = 1;
 				SDL_RenderDrawRect(renderer,&r);
 			}
 
@@ -172,6 +200,7 @@ draw(piece p, int map[ROWS*COLS])
 		counter = counter + COLS - 4; /* 4 the row and col size of the tetrominoes' map */
 	}
 	SDL_RenderPresent(renderer);
+	
 	
 }
 
@@ -197,47 +226,61 @@ main()
 {
 	init();
 	srand(time(NULL));
-
-
 	int map[ROWS*COLS] = {0};
-//	piece p = {0, 0, 0, 0};
-	piece p = {128, 128, 0, 0};
+	int last_time = 0;
+	int lag_time = 100;
+	int curr_time;
+	int counter = -1;
+
+	draw_map(map);
+	piece p;
 	new_piece(&p);
 	
-	int gravity = 1;
-	int last_time = 0;
-	int curr_time;
-    while (1) {
+	while (1) {
 
 		curr_time = SDL_GetTicks();
-        SDL_PollEvent(&event);
 
-        if (event.type == SDL_QUIT) {
-            break;
-        }
-		/* Input Handling */
-		if (event.type == SDL_KEYDOWN) {
-			switch (event.key.keysym.sym) {
-			case SDLK_LEFT:
-
-			case SDLK_RIGHT:
-
-			case SDLK_DOWN:
-
-			case SDLK_SPACE:
-
-			default:
-				break;
-			}
+		if (event.type == SDL_QUIT) {
+			return 0;
 		}
 		/* Frames */
+		
+		while (SDL_PollEvent(&event)) {
+			if (event.type == SDL_KEYDOWN) {
+				switch (event.key.keysym.sym) {
+				case SDLK_LEFT:
+					p.x = p.x - 32;
+					printf("Here");
+					draw(&p, map);
+					break;
+
+				case SDLK_RIGHT:
+					p.x = p.x + 32;
+					draw(&p, map);
+					break;
+
+				case SDLK_DOWN:
+
+				case SDLK_SPACE:
+
+				default:
+					break;
+				}
+			}
+		}
+
 		if (curr_time > last_time + 200) {
-			draw(p, map);
+			draw_map(map);
+			if (counter++ > ROWS - 1) {
+				counter = 0;
+				save_map(&p, map);
+				new_piece(&p); 
+			}
 			p.y = p.y + 32;
-		//	draw_map(map);
+			draw(&p, map);
 			last_time = curr_time;
 		}
-    }
+	}
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

@@ -13,8 +13,10 @@ def warn(s):
     sys.exit(1)
 
 def treepy():
-    if len(sys.argv) < 2:
-        warn('no input given')
+    if len(sys.argv) != 2: 
+        warn('wrong input given')
 
-
+    if sys.argv[1] == '.':
+        print('It is a dot')
     
+treepy()
