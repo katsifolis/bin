@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# Python 3.7.3
-
 ### Abstract ###
 
 ### Text adventure game ###
@@ -34,7 +32,7 @@ def initialize():
     slow_type(locations["room"])
     
 
-def loop():
+def loop(adventurer):
     inp = input("> ")
     while inp:
         if inp == 'clear':
@@ -54,9 +52,9 @@ def loop():
             slow_type(locations[adventurer.place])
             
 
-        elif inp == 'inventory':
+        elif inp == 'inventory' or inp == 'inv':
             print('-Inventory-')
-            for i in p.get_inventory():
+            for i in adventurer.get_inventory():
                 print(i)
 
         else:
@@ -64,7 +62,6 @@ def loop():
     
         inp = input("> ")
 
-adventurer = player()
+p = player()
 initialize()
-loop()
-
+loop(p)

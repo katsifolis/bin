@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -8,9 +8,7 @@ Fetches lyrics from azlyrics.com
 
 from bs4 import BeautifulSoup
 from urllib import request
-from re import sub
-import crayons as cra
-import os, sys
+import sys
 
 # Globals
 
@@ -20,11 +18,8 @@ import os, sys
 - 2 for error typing
 """
 
-flag = True
-page = 0
-
 def quit(s):
-    print(s)
+    print("\n" + s)
     flag = False
     sys.exit()
 
@@ -35,14 +30,11 @@ def replace_(s, c):
 
     return s
 
-# HTML ugly stuff
-def beautify(ugly):
-    print(ugly)
-
-def fetch(page):
+def fetch(song, page):
     #Assertions
     try: 
-        req = request.urlopen('https://search.azlyrics.com/search.php?q={}&w=songs&p={}'.format(sys.argv[1], page))
+        req = request.urlopen('https://search.azlyrics.com/search.php?q={}&w=songs&p={}'.format(song.replace(' ', '+'), page))
+        print(req.url)
     except:
         quit("Didn't provide any song name")
 
@@ -57,6 +49,8 @@ def fetch(page):
     try:
         if "Sorry" in soup.find("div", class_="alert").text:
             quit("No results found :(")
+    except EOFError:
+        print("exiting...")
     except:
         pass
 
@@ -64,6 +58,7 @@ def fetch(page):
     song_name = ''
     counter = 1
     songs = []
+    search_result = []
 
     for i in soup.find_all(class_='text-left visitedlyr'):
         
@@ -79,6 +74,7 @@ def fetch(page):
 
 
         # Ignores unicode characters + special chars because the url completely ignores them and 
+        search_result.append(str(counter) + '. ' + song_name + ' - ' + band)
         print(str(counter) + '. ' + song_name + ' - ' + band)
         band = replace_(band, '() \'')
         song_name = replace_(song_name, '() \'')
@@ -95,6 +91,8 @@ def fetch(page):
 
     except ValueError:
         quit('Bad luck: str given')
+    except EOFError:
+        quit('Exiting...')
         
 
     req = request.urlopen('https://www.azlyrics.com/lyrics/{}/{}.html'.format(songs[slctn - 1].split(' ')[1], songs[slctn - 1].split(' ')[0]))
@@ -102,9 +100,14 @@ def fetch(page):
     soup = BeautifulSoup(req.read(), 'html5lib')
     title = soup.find("div", class_='ringtone').find_next("div")
     lyr = title.get_text()
-    beautify(lyr)
-    return False
     
-while flag:
-    page = page + 1
-    flag = fetch(page)
+    return search_result, False
+    
+def run(song):
+    page = 0
+    flag = True
+    while flag:
+        page = page + 1
+        lyrics, flag = fetch(song, page)
+        return lyrics
+        

@@ -8,5 +8,6 @@ locations = {
 insults = [
     'What are you talking about?',
     'Are you insane?',
-    'Play the game not the fool.'
+    'Play the game not the fool.',
+    'Επικοινωνείς;',
 ]
