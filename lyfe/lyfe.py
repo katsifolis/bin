@@ -75,39 +75,39 @@ def fetch(song, page):
 
         # Ignores unicode characters + special chars because the url completely ignores them and 
         search_result.append(str(counter) + '. ' + song_name + ' - ' + band)
-        print(str(counter) + '. ' + song_name + ' - ' + band)
         band = replace_(band, '() \'')
         song_name = replace_(song_name, '() \'')
         songs.append(band + ' ' +  song_name)
 
         counter = counter + 1
+#
+##    try:
+##        slctn = int(input('Make your selection, or see more results (0): '))
+##        if slctn == 0:
+##            return True
+##        if slctn > 20 or slctn < 1:
+##            slctn = int(input('Invalid,\nMake your selection: '))
+#
+#    except ValueError:
+#        quit('Bad luck: str given')
+#    except EOFError:
+#        quit('Exiting...')
+#        
 
-    try:
-        slctn = int(input('Make your selection, or see more results (0): '))
-        if slctn == 0:
-            return True
-        if slctn > 20 or slctn < 1:
-            slctn = int(input('Invalid,\nMake your selection: '))
-
-    except ValueError:
-        quit('Bad luck: str given')
-    except EOFError:
-        quit('Exiting...')
-        
-
-    req = request.urlopen('https://www.azlyrics.com/lyrics/{}/{}.html'.format(songs[slctn - 1].split(' ')[1], songs[slctn - 1].split(' ')[0]))
-
-    soup = BeautifulSoup(req.read(), 'html5lib')
-    title = soup.find("div", class_='ringtone').find_next("div")
-    lyr = title.get_text()
+#    req = request.urlopen('https://www.azlyrics.com/lyrics/{}/{}.html'.format(songs[slctn - 1].split(' ')[1], songs[slctn - 1].split(' ')[0]))
+#
+#    soup = BeautifulSoup(req.read(), 'html5lib')
+#    title = soup.find("div", class_='ringtone').find_next("div")
+#    lyr = title.get_text()
     
-    return search_result, False
+    retur
+    search_result, False
+
     
 def run(song):
     page = 0
     flag = True
     while flag:
         page = page + 1
-        lyrics, flag = fetch(song, page)
-        return lyrics
-        
+        song_list, flag = fetch(song, page)
+        return song_list
