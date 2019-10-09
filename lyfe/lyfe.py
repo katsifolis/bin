@@ -8,7 +8,7 @@ Fetches lyrics from azlyrics.com
 
 from bs4 import BeautifulSoup
 from urllib import request
-import sys
+import sys, re
 
 # Globals
 
@@ -80,28 +80,22 @@ def fetch(song, page):
         songs.append(band + ' ' +  song_name)
 
         counter = counter + 1
-#
-##    try:
-##        slctn = int(input('Make your selection, or see more results (0): '))
-##        if slctn == 0:
-##            return True
-##        if slctn > 20 or slctn < 1:
-##            slctn = int(input('Invalid,\nMake your selection: '))
+
+#    try:
+#        slctn = int(input('Make your selection, or see more results (0): '))
+#        if slctn == 0:
+#            return True
+#        if slctn > 20 or slctn < 1:
+#            slctn = int(input('Invalid,\nMake your selection: '))
 #
 #    except ValueError:
-#        quit('Bad luck: str given')
+#       quit('Bad luck: str given')
 #    except EOFError:
-#        quit('Exiting...')
-#        
+#       quit('Exiting...')
+       
 
-#    req = request.urlopen('https://www.azlyrics.com/lyrics/{}/{}.html'.format(songs[slctn - 1].split(' ')[1], songs[slctn - 1].split(' ')[0]))
-#
-#    soup = BeautifulSoup(req.read(), 'html5lib')
-#    title = soup.find("div", class_='ringtone').find_next("div")
-#    lyr = title.get_text()
     
-    retur
-    search_result, False
+    return songs, search_result, False
 
     
 def run(song):
@@ -109,5 +103,25 @@ def run(song):
     flag = True
     while flag:
         page = page + 1
-        song_list, flag = fetch(song, page)
-        return song_list
+        result, names, flag = fetch(song, page)
+        return result, names
+        
+
+def fetch_lyrics(songs, slctn):
+
+    for i, j in enumerate(songs):
+        songs[i] = re.sub('\sthe', ' ', songs[i], 1)
+        songs[i] = re.sub('[^a-zA-Z0-9\s]', '', songs[i])
+        
+
+    print(songs)
+    
+    req = request.urlopen('https://www.azlyrics.com/lyrics/{}/{}.html'.format(songs[slctn - 1].split(' ')[1].strip(), songs[slctn - 1].split(' ')[0].strip()))
+    try:
+        soup = BeautifulSoup(req.read(), 'html5lib')
+        title = soup.find("div", class_='ringtone').find_next("div")
+        lyr = title.get_text()
+        print(lyr.split('\n'))
+        return lyr.split('\n')
+    except:
+        print(req.url)

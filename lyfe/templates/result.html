@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <title>Lyrics Crawler</title>
+
+  <style>
+    * {
+      text-align: center;
+      background-color: white;
+    }
+
+  </style>
+  </head>
+  <body>
+
+    {% if song %}
+      {% for line in song %}
+        <p> {{line}} </p>
+      {% endfor %}
+    {% endif %}
+
+  </body>
+</html>

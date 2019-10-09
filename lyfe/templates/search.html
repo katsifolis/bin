@@ -2,16 +2,44 @@
   <head>
     <title>Lyrics Crawler</title>
 
+  <style>
+    * {
+      text-align: center;
+    }
+    p {
+      margin-top: 20px;
+    }
+  </style>
+
   </head>
   <body>
 
   {% if song_name %}
     {% for song in song_name %}
-      <a href="#"><p>{{ song }}</p></a>
+      <a href="#" id="songs"><p id="songs">{{ song }}</p></a>
     {% endfor %}
   {% else %}
     <h1> E R R O R </h1>
   {% endif %}
 
   </body>
+  <script>
+    var g = document.getElementsByTagName('p');
+    for (var i = 0, len = g.length; i < len; i++)
+    {
+      (function(index){
+          console.log(songs)
+          g[i].onclick = function(){
+            console.log(index+1)
+          }
+      })(i)
+
+    }
+    var songs = document.getElementsByTagName('a')
+    for (var i = 0, len = songs.length; i < len; i++) {
+      songs[i].setAttribute('href', '/result/' + (i + 1))
+    }
+
+
+  </script>
 </html>
