@@ -2,7 +2,6 @@ import lyfe
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
-
 song_names = []
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -18,8 +17,5 @@ def index():
 @app.route('/result/<int:number>/', methods=['GET', 'POST'])
 def result(number):
     global song_names
-    print(song_names[1])
-    print(number)
     lyrics = lyfe.fetch_lyrics(song_names, number)
     return render_template("result.html", song=lyrics)
-

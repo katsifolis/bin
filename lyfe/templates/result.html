@@ -2,15 +2,12 @@
   <head>
     <title>Lyrics Crawler</title>
 
-  <style>
-    * {
-      text-align: center;
-      background-color: white;
-    }
-
-  </style>
+  <style src="{{url_for('static', filename='s.css')}}"> </style>
   </head>
   <body>
+
+    <h1> {{title}} </h1>
+    <h2> {{song_title}} </h2>
 
     {% if song %}
       {% for line in song %}
