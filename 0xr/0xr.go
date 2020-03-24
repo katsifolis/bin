@@ -1,7 +1,12 @@
 package main
 
-import "os"
-import "fmt"
+import (
+    "os"
+    "fmt"
+    "github.com/logrusorgru/aurora"
+    "flag"
+)
+
 
 func round(n int) int {
 
@@ -9,7 +14,7 @@ func round(n int) int {
     b := a + 10
 
     if a - n > b {
-        return a 
+        return a
     } else if b - n > a {
         return b
     } else {
@@ -43,7 +48,7 @@ func draw(buf []byte) {
     flag := false
 
     for i:=0x00000000;i<0x100;i = i + 0x10 {
-        fmt.Printf("%.8X: ", i)
+        fmt.Printf("%.8X: ", aurora.Magenta(i))
         for j:=0x0;j<0x10;j++ {
             fmt.Printf("%.2X", buf[j+i])
             if flag {
@@ -56,7 +61,7 @@ func draw(buf []byte) {
 
         for z:=0x0;z<0x10;z++ {
             if buf[z+i] > 0x7e || buf[z+i] < 0x21 {
-                fmt.Printf(".")
+                fmt.Printf("%c", aurora.Cyan(0x2e))
             } else if buf[z+i] == 0 {
                 fmt.Printf(".")
             } else {
@@ -67,11 +72,20 @@ func draw(buf []byte) {
     }
 }
 
+var flagvar bool
+func init() {
+    flag.BoolVar(&flagvar, "color", false, "Set the color or not")
+    flag.Parse()
+}
+
+
 func main() {
+
     if len(os.Args) < 2{
         os.Exit(1)
     }
     buff := o_file(os.Args[1])
     fmt.Printf("%x\n", len(buff))
     draw(buff)
+
 }
