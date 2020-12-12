@@ -7,12 +7,48 @@
 ### Mars ###
 
 import sys, time, random, io, json, string, os
-from player import player 
-from script import locations, insults
 import readline
 import pprint as pp
 
 typing_speed = 100
+
+
+class player:
+
+    inventory = ['flashlight', 'knife']
+    hunger = 0
+    place = 'room'
+
+    def __init__(self):
+        pass
+
+    def move(self, place):
+        self.place = place
+
+    def add(self, item):
+        self.inventory.append(item)
+
+    def get_inventory(self):
+        items = []
+        for i in self.inventory:
+            items.append(i)
+
+        return items
+
+locations = {
+
+    "room": "You are in a small dimly lit empty room",
+    "corridor": "You are in a brightly yet haunting long corridor with checkboard ceiling and walls"
+
+}
+
+insults = [
+    'What are you talking about?',
+    'Are you insane?',
+    'Play the game not the fool.',
+    'Επικοινωνείς;',
+]
+
 
 def slow_type(t):
     

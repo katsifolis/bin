@@ -6,10 +6,11 @@ Fetches Lyrics from azlyrics.com
 
 Just scraping
 
-# Treepy
+# sstetris
+Implementation of tetris (unfinished)
 
-Trees out the contets of the directory given
+# pycall
+Small text adventure game inspired by the movie total recall
 
-# Ristet (ReOrder of Tetris)
-
-Tetris sdl2 + C clone
+# 0xr
+Small hex viewer (unfinished)
