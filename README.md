@@ -6,11 +6,13 @@ Fetches Lyrics from azlyrics.com
 
 Just scraping
 
-# sstetris
+# brainfuck
+brainfuck interpreter
+
+# tetrijs
 Implementation of tetris (unfinished)
 
 # pycall
 Small text adventure game inspired by the movie total recall
 
-# 0xr
-Small hex viewer (unfinished)
+## All software in pre-alpha state
